@@ -1,7 +1,10 @@
 package dev.manish.userservice.controllers;
 
+import dev.manish.userservice.dtos.LoginRequestDto;
+import dev.manish.userservice.dtos.LogoutRequestDto;
 import dev.manish.userservice.dtos.SignUpRequestDto;
 import dev.manish.userservice.dtos.SignUpResponseDto;
+import dev.manish.userservice.models.Token;
 import dev.manish.userservice.models.User;
 import dev.manish.userservice.services.UserService;
 
@@ -22,14 +25,15 @@ public class UserController {
         this.userService = userService;
     }
 
-    public User login(){
+    @PostMapping("/login")
+    public Token login(@RequestBody LoginRequestDto loginRequestDto){
         /**
          * check if email and pass is in DB
          * if yes create the token(use random string ) return the token
          * else
          * return some error
          */
-        return null;
+        return userService.login(loginRequestDto.getEmail(), loginRequestDto.getPassword());
     }
 
     @PostMapping("/signup")
@@ -44,12 +48,21 @@ public class UserController {
         return toSignUpResponseDto(userService.signUp(requestDto.getName(), requestDto.getEmail(), requestDto.getPassword()));
     }
 
-    public ResponseEntity<Void> logout(){
-        /**
-         * Delete the token if exists -> 200
-         * if doesnot exist give 404
-         * */
-        return null;
+//    public ResponseEntity<Void> logout(){
+//        /**
+//         * Delete the token if exists -> 200
+//         * if doesnot exist give 404
+//         * */
+//        return null;
+//    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestBody LogoutRequestDto logoutRequestDto) {
+        // delete token if exists -> 200
+        // if doesn't exist give a 404
+
+        userService.logout(logoutRequestDto.getToken());
+        return ResponseEntity.ok().build(); // or throw an exception, based on your error handling policy
     }
 
     public SignUpResponseDto toSignUpResponseDto(User user){
