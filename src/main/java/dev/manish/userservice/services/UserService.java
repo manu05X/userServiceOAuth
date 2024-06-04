@@ -1,10 +1,12 @@
 package dev.manish.userservice.services;
 
+import dev.manish.userservice.exceptions.UserNotFoundException;
 import dev.manish.userservice.models.Token;
 import dev.manish.userservice.models.User;
 import dev.manish.userservice.repositories.TokenRepo;
 import dev.manish.userservice.repositories.UserRepo;
 import org.apache.commons.lang3.RandomStringUtils;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -70,6 +72,14 @@ public class UserService {
         return user;
     }
 
+    /*
+    API Call
+    http://localhost:8080/users/logout
+        {
+        "token": "heAoVFgk7Z8yVqI8RQxaEsw5HDvQZsbSZI3qFiC0EouDXnGDyijljfYiPnlBRxjFtGs3rZYXAegyS5rW485rYFefO4lxiKwkU2E1QIEbRAEybJHbvVaMNrWI2OVuXrDe"
+        }
+     */
+
     public void logout(String token) {
         //We are actually loggingOut a Token insted of user
         Optional<Token> token1 = tokenRepository.findByValueAndDeletedEquals(token, false);
@@ -81,5 +91,24 @@ public class UserService {
         Token t = token1.get();
         t.setDeleted(true);
         tokenRepository.save(t);
+    }
+
+    // http://localhost:8080/users/validate/TybOTWY5QAHP4v4W9rwp60CSFZZz9K6x1BKTOPUZhlTSevgQz0k4Lonqs6NyyCkAPdZHWuchafSbiDXmPuD75beDmJarK8Np3JC52JH51Jxihsv6J3oBwx9TUhaB4PF4
+    public User validateToken(String token) throws UserNotFoundException {
+        Optional<Token> token1 = tokenRepository.findByValueAndDeletedEquals(token, false);
+
+        if(token1.isEmpty()){
+            //return null;
+           throw new UserNotFoundException("Token not found");
+        }
+
+        Token t = token1.get();
+        if (t.getExpiryAt().before(new Date())) {
+           // return null;
+            //throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Token has expired");
+            throw new UserNotFoundException("Token is expired");
+        }
+
+        return t.getUser();
     }
 }

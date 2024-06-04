@@ -4,15 +4,14 @@ import dev.manish.userservice.dtos.LoginRequestDto;
 import dev.manish.userservice.dtos.LogoutRequestDto;
 import dev.manish.userservice.dtos.SignUpRequestDto;
 import dev.manish.userservice.dtos.SignUpResponseDto;
+import dev.manish.userservice.exceptions.UserNotFoundException;
 import dev.manish.userservice.models.Token;
 import dev.manish.userservice.models.User;
 import dev.manish.userservice.services.UserService;
 
+import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
@@ -76,5 +75,10 @@ public class UserController {
         responseDto.setEmailVerified(user.isEmailVerified());
 
         return responseDto;
+    }
+
+    @PostMapping("/validate/{token}")
+    public User validateToken(@PathVariable("token") @NonNull String token) throws UserNotFoundException {
+        return userService.validateToken(token);
     }
 }
