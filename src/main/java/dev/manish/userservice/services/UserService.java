@@ -12,7 +12,7 @@ public class UserService {
     private UserRepo userRepository;
 
 
-    public UserService(BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserService(BCryptPasswordEncoder bCryptPasswordEncoder, UserRepo userRepository) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userRepository = userRepository;
     }
@@ -22,10 +22,11 @@ public class UserService {
 
         u.setName(name);
         u.setEmail(email);
-        u.setHashedPassword(password);
+        //u.setHashedPassword(password);
+        u.setHashedPassword(bCryptPasswordEncoder.encode(password));
 
         User user = userRepository.save(u);
 
-        return null;
+        return user;
     }
 }
