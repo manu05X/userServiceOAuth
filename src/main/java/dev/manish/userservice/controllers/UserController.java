@@ -64,6 +64,11 @@ public class UserController {
         return ResponseEntity.ok().build(); // or throw an exception, based on your error handling policy
     }
 
+    @PostMapping("/validate/{token}")
+    public User validateToken(@PathVariable("token") @NonNull String token) throws UserNotFoundException {
+        return userService.validateToken(token);
+    }
+
     public SignUpResponseDto toSignUpResponseDto(User user){
         if(user == null){
             return null;
@@ -75,10 +80,5 @@ public class UserController {
         responseDto.setEmailVerified(user.isEmailVerified());
 
         return responseDto;
-    }
-
-    @PostMapping("/validate/{token}")
-    public User validateToken(@PathVariable("token") @NonNull String token) throws UserNotFoundException {
-        return userService.validateToken(token);
     }
 }
