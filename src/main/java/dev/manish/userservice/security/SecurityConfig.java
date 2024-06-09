@@ -130,6 +130,9 @@ public class SecurityConfig {
      *
      * RSA is by default a Asymmetric algo.
      *
+     *
+     * Client secret = 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
+     * client id = 915985927455-c3a6cduen41n62sdqq4s1g1d7en698hg.apps.googleusercontent.com
      * */
 
     private static KeyPair generateRsaKey() {
